@@ -190,6 +190,27 @@ func getKnownStorageTypes() []*registration.StorageType {
 	var result []*registration.StorageType
 	result = append(result, &registration.StorageType{Obj: new(apimanagement_v20220801s.Api)})
 	result = append(result, &registration.StorageType{Obj: new(apimanagement_v20220801s.ApiVersionSet)})
+	result = append(result, &registration.StorageType{Obj: new(apimanagement_v20220801s.AuthorizationProvider)})
+	result = append(result, &registration.StorageType{Obj: new(apimanagement_v20220801s.AuthorizationProvidersAuthorization)})
+	result = append(result, &registration.StorageType{
+		Obj: new(apimanagement_v20220801s.AuthorizationProvidersAuthorizationsAccessPolicy),
+		Indexes: []registration.Index{
+			{
+				Key:  ".spec.objectIdFromConfig",
+				Func: indexApimanagementAuthorizationProvidersAuthorizationsAccessPolicyObjectIdFromConfig,
+			},
+			{
+				Key:  ".spec.tenantIdFromConfig",
+				Func: indexApimanagementAuthorizationProvidersAuthorizationsAccessPolicyTenantIdFromConfig,
+			},
+		},
+		Watches: []registration.Watch{
+			{
+				Type:             &v1.ConfigMap{},
+				MakeEventHandler: watchConfigMapsFactory([]string{".spec.objectIdFromConfig", ".spec.tenantIdFromConfig"}, &apimanagement_v20220801s.AuthorizationProvidersAuthorizationsAccessPolicyList{}),
+			},
+		},
+	})
 	result = append(result, &registration.StorageType{
 		Obj: new(apimanagement_v20220801s.Backend),
 		Indexes: []registration.Index{
@@ -991,6 +1012,9 @@ func getKnownTypes() []client.Object {
 		result,
 		new(apimanagement_v20220801.Api),
 		new(apimanagement_v20220801.ApiVersionSet),
+		new(apimanagement_v20220801.AuthorizationProvider),
+		new(apimanagement_v20220801.AuthorizationProvidersAuthorization),
+		new(apimanagement_v20220801.AuthorizationProvidersAuthorizationsAccessPolicy),
 		new(apimanagement_v20220801.Backend),
 		new(apimanagement_v20220801.NamedValue),
 		new(apimanagement_v20220801.Policy),
@@ -1004,6 +1028,9 @@ func getKnownTypes() []client.Object {
 		result,
 		new(apimanagement_v20220801s.Api),
 		new(apimanagement_v20220801s.ApiVersionSet),
+		new(apimanagement_v20220801s.AuthorizationProvider),
+		new(apimanagement_v20220801s.AuthorizationProvidersAuthorization),
+		new(apimanagement_v20220801s.AuthorizationProvidersAuthorizationsAccessPolicy),
 		new(apimanagement_v20220801s.Backend),
 		new(apimanagement_v20220801s.NamedValue),
 		new(apimanagement_v20220801s.Policy),
@@ -1017,6 +1044,9 @@ func getKnownTypes() []client.Object {
 		result,
 		new(apimanagement_v20230501p.Api),
 		new(apimanagement_v20230501p.ApiVersionSet),
+		new(apimanagement_v20230501p.AuthorizationProvider),
+		new(apimanagement_v20230501p.AuthorizationProvidersAuthorization),
+		new(apimanagement_v20230501p.AuthorizationProvidersAuthorizationsAccessPolicy),
 		new(apimanagement_v20230501p.Backend),
 		new(apimanagement_v20230501p.NamedValue),
 		new(apimanagement_v20230501p.Policy),
@@ -1030,6 +1060,9 @@ func getKnownTypes() []client.Object {
 		result,
 		new(apimanagement_v20230501ps.Api),
 		new(apimanagement_v20230501ps.ApiVersionSet),
+		new(apimanagement_v20230501ps.AuthorizationProvider),
+		new(apimanagement_v20230501ps.AuthorizationProvidersAuthorization),
+		new(apimanagement_v20230501ps.AuthorizationProvidersAuthorizationsAccessPolicy),
 		new(apimanagement_v20230501ps.Backend),
 		new(apimanagement_v20230501ps.NamedValue),
 		new(apimanagement_v20230501ps.Policy),
@@ -1732,6 +1765,9 @@ func getResourceExtensions() []genruntime.ResourceExtension {
 	var result []genruntime.ResourceExtension
 	result = append(result, &apimanagement_customizations.ApiExtension{})
 	result = append(result, &apimanagement_customizations.ApiVersionSetExtension{})
+	result = append(result, &apimanagement_customizations.AuthorizationProviderExtension{})
+	result = append(result, &apimanagement_customizations.AuthorizationProvidersAuthorizationExtension{})
+	result = append(result, &apimanagement_customizations.AuthorizationProvidersAuthorizationsAccessPolicyExtension{})
 	result = append(result, &apimanagement_customizations.BackendExtension{})
 	result = append(result, &apimanagement_customizations.NamedValueExtension{})
 	result = append(result, &apimanagement_customizations.PolicyExtension{})
@@ -1912,6 +1948,30 @@ func getResourceExtensions() []genruntime.ResourceExtension {
 	result = append(result, &web_customizations.ServerFarmExtension{})
 	result = append(result, &web_customizations.SiteExtension{})
 	return result
+}
+
+// indexApimanagementAuthorizationProvidersAuthorizationsAccessPolicyObjectIdFromConfig an index function for apimanagement_v20220801s.AuthorizationProvidersAuthorizationsAccessPolicy .spec.objectIdFromConfig
+func indexApimanagementAuthorizationProvidersAuthorizationsAccessPolicyObjectIdFromConfig(rawObj client.Object) []string {
+	obj, ok := rawObj.(*apimanagement_v20220801s.AuthorizationProvidersAuthorizationsAccessPolicy)
+	if !ok {
+		return nil
+	}
+	if obj.Spec.ObjectIdFromConfig == nil {
+		return nil
+	}
+	return obj.Spec.ObjectIdFromConfig.Index()
+}
+
+// indexApimanagementAuthorizationProvidersAuthorizationsAccessPolicyTenantIdFromConfig an index function for apimanagement_v20220801s.AuthorizationProvidersAuthorizationsAccessPolicy .spec.tenantIdFromConfig
+func indexApimanagementAuthorizationProvidersAuthorizationsAccessPolicyTenantIdFromConfig(rawObj client.Object) []string {
+	obj, ok := rawObj.(*apimanagement_v20220801s.AuthorizationProvidersAuthorizationsAccessPolicy)
+	if !ok {
+		return nil
+	}
+	if obj.Spec.TenantIdFromConfig == nil {
+		return nil
+	}
+	return obj.Spec.TenantIdFromConfig.Index()
 }
 
 // indexApimanagementBackendPassword an index function for apimanagement_v20220801s.Backend .spec.proxy.password

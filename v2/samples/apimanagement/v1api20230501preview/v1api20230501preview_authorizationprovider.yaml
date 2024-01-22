@@ -1,0 +1,20 @@
+apiVersion: apimanagement.azure.com/v1api20230501preview
+kind: AuthorizationProvider
+metadata:
+  name: sampleapimauthorizationprovider
+  namespace: default
+spec:
+  displayName: "sampleauthcode"
+  identityProvider: "aad"
+  oauth2:
+    grantTypes:
+      authorizationCode:
+        clientIdFromConfig:
+          name: identity-settings
+          key: clientId
+        clientSecret: # This is the name/key of a Kubernetes secret in the same namespace
+          name: client-secret
+          key: secret
+        resourceUri: "https://www.contoso.com"
+  owner:
+    name: sampleapimservice
