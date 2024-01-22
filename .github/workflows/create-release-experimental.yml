@@ -10,6 +10,11 @@ on:
       - 'v2/**'
   # no content, allows manual triggering
   workflow_dispatch:
+    inputs:
+      branch:
+        description: 'Branch name'
+        required: false
+        default: 'main'
 
 env:
   ARTIFACT_VERSION: experimental
@@ -23,6 +28,7 @@ jobs:
         with:
           fetch-depth: 0 # required to access tags
           submodules: "true"
+          ref: ${{ inputs.branch }} 
 
       - name: Build & run devcontainer image
         # this always builds a new image from scratch rather than from the build-devcontainer-image workflow output
@@ -52,7 +58,7 @@ jobs:
           overwrite: true
           release_name: "Experimental"
           body: |
-            This is an experimental release which containing the most recent commits from the main branch as of commit: ${{ github.sha }}.
+            This is an experimental release which containing the most recent commits from the ${{ inputs.branch }} branch as of commit: ${{ github.sha }}.
 
             **This release might not be stable. Use at your own risk.** 
 
